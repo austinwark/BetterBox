@@ -2,55 +2,64 @@ package com.sandboxcode.betterbox.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Button;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sandboxcode.betterbox.R;
-import com.sandboxcode.betterbox.models.MovieModel;
-import com.sandboxcode.betterbox.request.MovieApi;
-import com.sandboxcode.betterbox.response.MovieSearchResponse;
-import com.sandboxcode.betterbox.utils.Credentials;
-import com.sandboxcode.betterbox.utils.RetrofitClient;
+import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
+import com.sandboxcode.betterbox.utils.GravitySnapHelper;
 import com.sandboxcode.betterbox.viewmodels.PopularMoviesViewModel;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import com.squareup.picasso.Picasso;
 
 public class PopularMoviesActivity extends AppCompatActivity {
 
-    private MovieApi movieApi;
-
     private PopularMoviesViewModel popularMoviesViewModel;
+    private PopularMoviesAdapter popularMoviesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_popular_movies);
+
+        popularMoviesAdapter = new PopularMoviesAdapter(this);
 
         popularMoviesViewModel =
                 new ViewModelProvider(this).get(PopularMoviesViewModel.class);
 
-        observeChanges();
-//        createMovieApi();
+        instantiateUI();
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(view ->
-                popularMoviesViewModel.loadPopularMovies(1));
+        observeChanges();
+
+
+
+        popularMoviesViewModel.loadPopularMovies(1);
+//        createMovieApi();1
+
+//        Button button = findViewById(R.id.button);
+//        button.setOnClickListener(view ->
+//                popularMoviesViewModel.loadPopularMovies(1));
+    }
+
+    private void instantiateUI() {
+        RecyclerView recyclerView = findViewById(R.id.activity_popular_movies_recyclerView);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+//        GravitySnapHelper gravitySnapHelper = new GravitySnapHelper(Gravity.TOP);
+//        gravitySnapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(popularMoviesAdapter);
     }
 
     private void observeChanges() {
         popularMoviesViewModel.getPopularMoviesLiveData().observe(this, movieModels -> {
             if (movieModels != null) {
-                for (MovieModel movieModel : movieModels) {
-                    Log.v("TAG", movieModel.toString());
-                }
+                popularMoviesAdapter.setResults(movieModels);
             }
         });
     }

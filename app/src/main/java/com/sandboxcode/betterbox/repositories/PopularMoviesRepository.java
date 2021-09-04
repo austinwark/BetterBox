@@ -1,5 +1,7 @@
 package com.sandboxcode.betterbox.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -7,7 +9,6 @@ import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.request.MovieApi;
 import com.sandboxcode.betterbox.response.MovieSearchResponse;
 import com.sandboxcode.betterbox.utils.Credentials;
-import com.sandboxcode.betterbox.utils.Servicey;
 
 import java.util.List;
 
@@ -48,6 +49,8 @@ public class PopularMoviesRepository {
                     public void onResponse(Call<MovieSearchResponse> call, Response<MovieSearchResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             popularMoviesLiveData.postValue(response.body().getResults());
+                            for (MovieModel movieModel : response.body().getResults())
+                                Log.v("MovieModel: ", movieModel.toString());
                         }
                     }
 

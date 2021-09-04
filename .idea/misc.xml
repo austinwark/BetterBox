@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Austin/AndroidStudioProjects/BetterBox/app/src/main/res/layout/activity_main.xml" value="0.18385416666666668" />
+        <entry key="..\:/Users/Austin/AndroidStudioProjects/BetterBox/app/src/main/res/layout/activity_popular_movies.xml" value="0.12409420289855072" />
+        <entry key="..\:/Users/Austin/AndroidStudioProjects/BetterBox/app/src/main/res/layout/popular_movie_item.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/Austin/AndroidStudioProjects/BetterBox/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
   </component>
