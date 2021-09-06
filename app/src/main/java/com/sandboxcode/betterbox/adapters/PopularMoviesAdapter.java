@@ -1,12 +1,15 @@
 package com.sandboxcode.betterbox.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -66,6 +69,10 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
                     .load(imageUrl)
                     .into(holder.thumbnailImageView);
         }
+
+        holder.progressBar.getProgressDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+        holder.progressBar.setProgress((int) movieModel.getVote_average() * 10);
+
     }
 
     @Override
@@ -80,11 +87,13 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     class PopularMoviesHolder extends RecyclerView.ViewHolder {
         private ImageView thumbnailImageView;
+        private ProgressBar progressBar;
 
         public PopularMoviesHolder(@NonNull View itemView) {
             super(itemView);
 
             thumbnailImageView = itemView.findViewById(R.id.popular_movie_item_thumbnail);
+            progressBar = itemView.findViewById(R.id.popular_movie_item_rating_bar);
         }
     }
 
