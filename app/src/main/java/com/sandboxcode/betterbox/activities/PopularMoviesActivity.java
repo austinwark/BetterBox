@@ -1,8 +1,11 @@
 package com.sandboxcode.betterbox.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
 import com.sandboxcode.betterbox.models.MovieModel;
@@ -24,9 +28,12 @@ public class PopularMoviesActivity extends AppCompatActivity {
     private PopularMoviesViewModel popularMoviesViewModel;
     private PopularMoviesAdapter popularMoviesAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    RecyclerView recyclerView;
+    private FloatingActionButton floatingActionButton;
 
     private List<MovieModel> results;
     private int pageCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,9 @@ public class PopularMoviesActivity extends AppCompatActivity {
     }
 
     private void instantiateUI() {
-        RecyclerView recyclerView = findViewById(R.id.activity_popular_movies_recyclerView);
+        recyclerView = findViewById(R.id.activity_popular_movies_recyclerView);
+        floatingActionButton = findViewById(R.id.activity_popular_movies_fab);
+
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
 //        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -73,16 +82,17 @@ public class PopularMoviesActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int lastItem = gridLayoutManager.findLastCompletelyVisibleItemPosition();
 
+                popularMoviesViewModel.handleUserScrolled(dy, lastItem);
                 if (dy > 0) {
 
                     final int VISIBLE_THRESHOLD = 12;
-                    GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                    int lastItem = gridLayoutManager.findLastCompletelyVisibleItemPosition();
+
                     int currentTotalCount = gridLayoutManager.getItemCount();
 
                     if (currentTotalCount <= lastItem + VISIBLE_THRESHOLD) {
-                        Log.v("TAG ----", " " + lastItem);
                         popularMoviesViewModel.loadPopularMovies(pageCount);
                         pageCount++;
                     }
@@ -92,7 +102,15 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
 //        GravitySnapHelper gravitySnapHelper = new GravitySnapHelper(Gravity.TOP);
 //        gravitySnapHelper.attachToRecyclerView(recyclerView);
+
         recyclerView.setAdapter(popularMoviesAdapter);
+        floatingActionButton.setOnClickListener(v -> {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+            if (gridLayoutManager != null) {
+                gridLayoutManager.scrollToPosition(0);
+                popularMoviesViewModel.handleUserScrolled(-30, gridLayoutManager.findLastCompletelyVisibleItemPosition());
+            }
+        });
     }
 
     private void refreshData() {
@@ -114,6 +132,36 @@ public class PopularMoviesActivity extends AppCompatActivity {
             }
 
             swipeRefreshLayout.setRefreshing(false);
+        });
+
+        // TODO -- Move logic to ViewModel
+        popularMoviesViewModel.getFabVisibilityLiveData().observe(this, fabVisibility -> {
+            if (fabVisibility == 0)
+                fadeViewIn(floatingActionButton);
+            else
+                fadeViewOut(floatingActionButton);
+
+        });
+    }
+
+    private void fadeViewIn(View view) {
+        Log.v("FADE", "IN");
+        int shortAnimationDuration =
+                getResources().getInteger(android.R.integer.config_shortAnimTime);
+        view.setVisibility(View.VISIBLE);
+        view.animate().alpha(1f).setDuration(shortAnimationDuration).setListener(null);
+    }
+
+    private void fadeViewOut(View view) {
+        Log.v("FADE", "OUT");
+
+        int shortAnimationDuration =
+                getResources().getInteger(android.R.integer.config_shortAnimTime);
+        view.animate().alpha(0f).setDuration(shortAnimationDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                floatingActionButton.setVisibility(View.GONE);
+            }
         });
     }
 
