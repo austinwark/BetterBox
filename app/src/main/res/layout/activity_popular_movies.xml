@@ -30,6 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
+        android:alpha="0"
         android:contentDescription="@string/activity_popular_movies_fab"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,7 @@ public class PopularMoviesViewModel extends ViewModel {
 
         popularMoviesRepository = PopularMoviesRepository.getInstance();
         popularMoviesLiveData = popularMoviesRepository.getPopularMoviesLiveData();
-        fabVisibilityLiveData = new MutableLiveData<>();
+        fabVisibilityLiveData = new MutableLiveData<>(8);
     }
 
     public LiveData<List<MovieModel>> getPopularMoviesLiveData() {
@@ -34,8 +34,17 @@ public class PopularMoviesViewModel extends ViewModel {
     }
 
     public void handleUserScrolled(int dy, int lastVisibleItem) {
+        int currentVisibleState = fabVisibilityLiveData.getValue();
 
-        // IF user scrolled approximately two rows down
+        boolean noChangeInScrollDirection =
+                ((currentVisibleState == 0 && dy > 0) || (currentVisibleState == 8 && dy < 0));
+
+        Log.v("DY: ", String.valueOf(noChangeInScrollDirection));
+        // Prevents unnecessary postValue calls if scroll direction does not change
+        if (noChangeInScrollDirection)
+            return;
+
+        // IF user scrolled approximately two rows down (comparing dy to 25 reduces sensitivity)
         if (dy > 25 && lastVisibleItem > 15)
             fabVisibilityLiveData.postValue(0); // visible
         else if (dy < -25)

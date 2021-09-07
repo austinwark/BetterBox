@@ -1,5 +1,7 @@
 package com.sandboxcode.betterbox.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -31,6 +33,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
     private List<MovieModel> results;
     private int pageCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +106,10 @@ public class PopularMoviesActivity extends AppCompatActivity {
         recyclerView.setAdapter(popularMoviesAdapter);
         floatingActionButton.setOnClickListener(v -> {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-            if (gridLayoutManager != null)
+            if (gridLayoutManager != null) {
                 gridLayoutManager.scrollToPosition(0);
+                popularMoviesViewModel.handleUserScrolled(-30, gridLayoutManager.findLastCompletelyVisibleItemPosition());
+            }
         });
     }
 
@@ -129,8 +134,34 @@ public class PopularMoviesActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         });
 
+        // TODO -- Move logic to ViewModel
         popularMoviesViewModel.getFabVisibilityLiveData().observe(this, fabVisibility -> {
-            floatingActionButton.setVisibility(fabVisibility);
+            if (fabVisibility == 0)
+                fadeViewIn(floatingActionButton);
+            else
+                fadeViewOut(floatingActionButton);
+
+        });
+    }
+
+    private void fadeViewIn(View view) {
+        Log.v("FADE", "IN");
+        int shortAnimationDuration =
+                getResources().getInteger(android.R.integer.config_shortAnimTime);
+        view.setVisibility(View.VISIBLE);
+        view.animate().alpha(1f).setDuration(shortAnimationDuration).setListener(null);
+    }
+
+    private void fadeViewOut(View view) {
+        Log.v("FADE", "OUT");
+
+        int shortAnimationDuration =
+                getResources().getInteger(android.R.integer.config_shortAnimTime);
+        view.animate().alpha(0f).setDuration(shortAnimationDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                floatingActionButton.setVisibility(View.GONE);
+            }
         });
     }
 
