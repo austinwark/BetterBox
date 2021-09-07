@@ -1,6 +1,9 @@
 package com.sandboxcode.betterbox.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sandboxcode.betterbox.models.MovieModel;
@@ -13,10 +16,13 @@ public class PopularMoviesViewModel extends ViewModel {
     private PopularMoviesRepository popularMoviesRepository;
     private LiveData<List<MovieModel>> popularMoviesLiveData;
 
+    private MutableLiveData<Integer> fabVisibilityLiveData;
+
     public PopularMoviesViewModel() {
 
         popularMoviesRepository = PopularMoviesRepository.getInstance();
         popularMoviesLiveData = popularMoviesRepository.getPopularMoviesLiveData();
+        fabVisibilityLiveData = new MutableLiveData<>();
     }
 
     public LiveData<List<MovieModel>> getPopularMoviesLiveData() {
@@ -25,6 +31,19 @@ public class PopularMoviesViewModel extends ViewModel {
 
     public void loadPopularMovies(int pageNumber) {
         popularMoviesRepository.loadPopularMovies(pageNumber);
+    }
+
+    public void handleUserScrolled(int dy, int lastVisibleItem) {
+
+        // IF user scrolled approximately two rows down
+        if (dy > 25 && lastVisibleItem > 15)
+            fabVisibilityLiveData.postValue(0); // visible
+        else if (dy < -25)
+            fabVisibilityLiveData.postValue(8); // gone
+    }
+
+    public MutableLiveData<Integer> getFabVisibilityLiveData() {
+        return fabVisibilityLiveData;
     }
 
 //    public void getPopularMovies(String query, int pageNumber) {
