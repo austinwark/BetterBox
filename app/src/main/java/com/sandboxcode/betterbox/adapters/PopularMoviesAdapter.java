@@ -27,7 +27,6 @@ import com.bumptech.glide.request.target.Target;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.utils.Credentials;
-import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
@@ -56,29 +55,15 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
     public void onBindViewHolder(@NonNull PopularMoviesHolder holder, int position) {
         MovieModel movieModel = results.get(position);
         holder.titleTextView.setText(movieModel.getTitle());
-        Log.v("TAG: ", String.valueOf(position));
 
         if (movieModel.getPoster_path() != null) {
 //            String imageUrl = Credentials.IMAGE_BASE_URL + "original" + movieModel.getPoster_path();
             String imageUrl = Credentials.IMAGE_BASE_URL + "w154" + movieModel.getPoster_path();
-            Log.v("IMAGE URL: ", imageUrl);
-
-//            Picasso.Builder builder = new Picasso.Builder(context);
-//            builder.listener(new Picasso.Listener() {
-//                @Override
-//                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-//                    exception.printStackTrace();
-//                }});
-//
-//            builder.build().load(imageUrl).into(holder.thumbnailImageView);
-
-
-//            Picasso.get().load(imageUrl).into(holder.thumbnailImageView);
 
 
             Glide.with(holder.itemView)
                     .load(imageUrl)
-                    .placeholder(new ColorDrawable(Color.BLACK))
+                    .placeholder(new ColorDrawable(0xFF018786))
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -1,6 +1,7 @@
 package com.sandboxcode.betterbox.activities;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
@@ -21,6 +23,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
     private PopularMoviesViewModel popularMoviesViewModel;
     private PopularMoviesAdapter popularMoviesAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private List<MovieModel> results;
     private int pageCount;
@@ -47,11 +50,17 @@ public class PopularMoviesActivity extends AppCompatActivity {
         /* ViewModel updates LiveData which is observed in observeChanges() */
         popularMoviesViewModel.loadPopularMovies(pageCount);
         pageCount++;
-//        createMovieApi();1
 
-//        Button button = findViewById(R.id.button);
-//        button.setOnClickListener(view ->
-//                popularMoviesViewModel.loadPopularMovies(1));
+        swipeRefreshLayout = findViewById(R.id.activity_popular_movies_refresh_layout);
+        swipeRefreshLayout.setDistanceToTriggerSync((int) (24 * getResources().getDisplayMetrics().density));
+        swipeRefreshLayout.setSlingshotDistance((int) (48 * getResources().getDisplayMetrics().density));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+
     }
 
     private void instantiateUI() {
@@ -86,17 +95,25 @@ public class PopularMoviesActivity extends AppCompatActivity {
         recyclerView.setAdapter(popularMoviesAdapter);
     }
 
+    private void refreshData() {
+        pageCount = 1;
+        int currentPosition = popularMoviesAdapter.getItemCount();
+        results.clear();
+        popularMoviesAdapter.notifyItemRangeRemoved(currentPosition, currentPosition + 1);
+        popularMoviesViewModel.loadPopularMovies(pageCount);
+    }
+
     private void observeChanges() {
+
         popularMoviesViewModel.getPopularMoviesLiveData().observe(this, movieModels -> {
             if (movieModels != null && !movieModels.isEmpty()) {
 
                 int currentPosition = popularMoviesAdapter.getItemCount();
                 results.addAll(movieModels);
-                Log.v("Current: ", "current: " + currentPosition);
-                Log.v("Size: ", "new: " + results.size());
                 popularMoviesAdapter.notifyItemRangeChanged(currentPosition, movieModels.size());
-//                popularMoviesAdapter.notifyDataSetChanged();
             }
+
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
