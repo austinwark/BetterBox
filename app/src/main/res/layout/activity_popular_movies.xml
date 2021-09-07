@@ -5,8 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@color/teal_700"
     tools:context=".activities.PopularMoviesActivity">
 
 <!--    <Button-->
@@ -19,6 +20,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_popular_movies_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>
