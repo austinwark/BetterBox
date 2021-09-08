@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
 import com.sandboxcode.betterbox.models.MovieModel;
+import com.sandboxcode.betterbox.utils.OnPopularMovieClickListener;
 import com.sandboxcode.betterbox.viewmodels.PopularMoviesViewModel;
 
 import java.util.ArrayList;
@@ -44,7 +45,12 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
         results = new ArrayList<>(); // TODO - handle on config change
 
-        popularMoviesAdapter = new PopularMoviesAdapter(this, results);
+        popularMoviesAdapter = new PopularMoviesAdapter(this, results, new OnPopularMovieClickListener() {
+            @Override
+            public void onPopularMovieClicked(int id) {
+                popularMoviesViewModel.loadMovieDetails(id);
+            }
+        });
 
         popularMoviesViewModel =
                 new ViewModelProvider(this).get(PopularMoviesViewModel.class);

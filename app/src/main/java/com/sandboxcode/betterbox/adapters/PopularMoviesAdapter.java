@@ -27,6 +27,7 @@ import com.bumptech.glide.request.target.Target;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.utils.Credentials;
+import com.sandboxcode.betterbox.utils.OnPopularMovieClickListener;
 
 
 import java.util.ArrayList;
@@ -36,10 +37,12 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     private List<MovieModel> results;
     public Context context;
+    OnPopularMovieClickListener clickListener;
 
-    public PopularMoviesAdapter(Context context, List results) {
+    public PopularMoviesAdapter(Context context, List<MovieModel> results, OnPopularMovieClickListener clickListener) {
         this.context = context;
         this.results = results;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -55,6 +58,9 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
     public void onBindViewHolder(@NonNull PopularMoviesHolder holder, int position) {
         MovieModel movieModel = results.get(position);
         holder.titleTextView.setText(movieModel.getTitle());
+
+        holder.getItemView().setOnClickListener(v ->
+                clickListener.onPopularMovieClicked(movieModel.getId()));
 
         if (movieModel.getPoster_path() != null) {
 //            String imageUrl = Credentials.IMAGE_BASE_URL + "original" + movieModel.getPoster_path();
@@ -99,6 +105,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 //    }
 
     class PopularMoviesHolder extends RecyclerView.ViewHolder {
+        private View itemView;
         private TextView titleTextView;
         private ImageView thumbnailImageView;
         private ProgressBar progressBar;
@@ -106,9 +113,14 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         public PopularMoviesHolder(@NonNull View itemView) {
             super(itemView);
 
+            this.itemView = itemView;
             titleTextView = itemView.findViewById(R.id.popular_movie_item_title);
             thumbnailImageView = itemView.findViewById(R.id.popular_movie_item_thumbnail);
             progressBar = itemView.findViewById(R.id.popular_movie_item_rating_bar);
+        }
+
+        public View getItemView() {
+            return itemView;
         }
     }
 

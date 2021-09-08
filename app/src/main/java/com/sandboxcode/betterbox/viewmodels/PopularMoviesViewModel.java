@@ -55,6 +55,10 @@ public class PopularMoviesViewModel extends ViewModel {
         return fabVisibilityLiveData;
     }
 
+    public void loadMovieDetails(int id) {
+        popularMoviesRepository.loadMovieDetails(id);
+    }
+
 //    public void getPopularMovies(String query, int pageNumber) {
 //        popularMoviesRepository.searchPopularMovies(query, pageNumber);
 //    }

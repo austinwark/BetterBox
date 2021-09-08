@@ -6,7 +6,7 @@ import com.sandboxcode.betterbox.models.MovieModel;
 
 import java.util.List;
 
-public class MovieSearchResponse {
+public class PopularMoviesResponse {
 
     @SerializedName("total_results")
     @Expose()
@@ -22,7 +22,7 @@ public class MovieSearchResponse {
 
     @Override
     public String toString() {
-        return "MovieSearchResponse{" +
+        return "PopularMoviesResponse{" +
                 "total_count=" + total_count +
                 ", results=" + results +
                 '}';
