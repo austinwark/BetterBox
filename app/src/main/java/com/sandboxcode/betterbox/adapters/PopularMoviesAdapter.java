@@ -62,10 +62,10 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         holder.getItemView().setOnClickListener(v ->
                 clickListener.onPopularMovieClicked(movieModel.getId()));
 
+        // TODO -- Set HEIGHT & WIDTH of ImageView programmatically
         if (movieModel.getPoster_path() != null) {
-//            String imageUrl = Credentials.IMAGE_BASE_URL + "original" + movieModel.getPoster_path();
-            String imageUrl = Credentials.IMAGE_BASE_URL + "w154" + movieModel.getPoster_path();
 
+            String imageUrl = Credentials.IMAGE_BASE_URL + "w154" + movieModel.getPoster_path();
 
             Glide.with(holder.itemView)
                     .load(imageUrl)

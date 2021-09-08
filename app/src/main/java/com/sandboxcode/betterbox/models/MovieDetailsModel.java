@@ -154,6 +154,8 @@ public class MovieDetailsModel implements Parcelable {
         return genres;
     }
 
+    public String getFirstGenreName() { return genres.get(0).getName(); }
+
     public float getPopularity() {
         return popularity;
     }

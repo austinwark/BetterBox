@@ -2,6 +2,7 @@ package com.sandboxcode.betterbox.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,6 +27,7 @@ import java.util.List;
 
 public class PopularMoviesActivity extends AppCompatActivity {
 
+    public static final String MOVIE_ID_MESSAGE = "com.sandboxcode.betterbox.MOVIE_ID_MESSAGE";
     private PopularMoviesViewModel popularMoviesViewModel;
     private PopularMoviesAdapter popularMoviesAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -33,8 +35,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
     private FloatingActionButton floatingActionButton;
 
     private List<MovieModel> results;
-    private int pageCount;
-
+    private int pageCount; // TODO -- Keep track in VIEWMODEL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +46,19 @@ public class PopularMoviesActivity extends AppCompatActivity {
 
         results = new ArrayList<>(); // TODO - handle on config change
 
+        popularMoviesViewModel =
+                new ViewModelProvider(this).get(PopularMoviesViewModel.class);
+
         popularMoviesAdapter = new PopularMoviesAdapter(this, results, new OnPopularMovieClickListener() {
             @Override
             public void onPopularMovieClicked(int id) {
-                popularMoviesViewModel.loadMovieDetails(id);
+                startMovieDetailsActivity(id);
             }
         });
-
-        popularMoviesViewModel =
-                new ViewModelProvider(this).get(PopularMoviesViewModel.class);
 
         instantiateUI();
 
         observeChanges();
-
 
         /* ViewModel updates LiveData which is observed in observeChanges() */
         popularMoviesViewModel.loadPopularMovies(pageCount);
@@ -74,6 +74,12 @@ public class PopularMoviesActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void startMovieDetailsActivity(int id) {
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra(MOVIE_ID_MESSAGE, id);
+        startActivity(intent);
     }
 
     private void instantiateUI() {
