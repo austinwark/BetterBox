@@ -70,6 +70,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
             Glide.with(holder.itemView)
                     .load(imageUrl)
                     .placeholder(new ColorDrawable(0xFF018786))
+                    .error(R.drawable.ic_baseline_no_image_24)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -16,8 +16,6 @@ public class MovieDetailsViewModel extends ViewModel {
 
     private MovieDetailsRepository movieDetailsRepository;
     private MutableLiveData<MovieDetailsModel> movieDetailsLiveData;
-    private MutableLiveData<List<CastModel>> castListLiveData;
-    private MutableLiveData<List<CrewModel>> crewListLiveData;
 
     private Boolean isOverviewTruncated;
     private MutableLiveData<Boolean> showMoreOverviewLiveData; // Expand overview
@@ -29,8 +27,6 @@ public class MovieDetailsViewModel extends ViewModel {
         movieDetailsRepository = MovieDetailsRepository.getInstance();
 
         movieDetailsLiveData = movieDetailsRepository.getMovieDetailsLiveData();
-        castListLiveData = movieDetailsRepository.getCastListLiveData();
-        crewListLiveData = movieDetailsRepository.getCrewListLiveData();
 
         showMoreOverviewLiveData = new MutableLiveData<>();
         showLessOverviewLiveData = new MutableLiveData<>();
@@ -39,21 +35,6 @@ public class MovieDetailsViewModel extends ViewModel {
 
     public void loadMovieDetails(int id) {
         movieDetailsRepository.loadMovieDetails(id);
-    }
-
-    /* Find director in list of crew. Returns default CrewModel if not found */
-    public CrewModel getMovieDirector(List<CrewModel> crewList) {
-        String jobName = "Director";
-        CrewModel director =
-                new CrewModel(0, "Undetermined", jobName, null, "Directing");
-
-        for (CrewModel crew : crewList) {
-            if (crew.getJob().equalsIgnoreCase(jobName)) {
-                director = crew;
-            }
-        }
-
-        return director;
     }
 
     public void checkOverviewSize(int numLines) {
@@ -81,14 +62,6 @@ public class MovieDetailsViewModel extends ViewModel {
 
     public MutableLiveData<MovieDetailsModel> getMovieDetailsLiveData() {
         return movieDetailsLiveData;
-    }
-
-    public MutableLiveData<List<CastModel>> getCastListLiveData() {
-        return castListLiveData;
-    }
-
-    public MutableLiveData<List<CrewModel>> getCrewListLiveData() {
-        return crewListLiveData;
     }
 
     public MutableLiveData<Boolean> getShowMoreOverviewLiveData() {

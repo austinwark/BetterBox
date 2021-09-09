@@ -26,8 +26,6 @@ public class MovieDetailsRepository {
 
     private MovieApi movieApi;
     private MutableLiveData<MovieDetailsModel> movieDetailsLiveData;
-    private MutableLiveData<List<CastModel>> castListLiveData;
-    private MutableLiveData<List<CrewModel>> crewListLiveData;
 
     public static MovieDetailsRepository getInstance() {
         if (instance == null)
@@ -38,8 +36,6 @@ public class MovieDetailsRepository {
 
     private MovieDetailsRepository() {
         movieDetailsLiveData = new MutableLiveData<>();
-        castListLiveData = new MutableLiveData<>();
-        crewListLiveData = new MutableLiveData<>();
 
         movieApi = new Retrofit.Builder()
                 .baseUrl(Credentials.BASE_URL)
@@ -55,9 +51,10 @@ public class MovieDetailsRepository {
                     public void onResponse(Call<MovieDetailsModel> call, Response<MovieDetailsModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             Log.v("MOVIE DETAILS: ", response.body().toString());
-                            movieDetailsLiveData.postValue(response.body());
+//                            movieDetailsLiveData.postValue(response.body());
+                            MovieDetailsModel movieDetailsModel = response.body();
 
-                            loadCredits(movieId);
+                            loadCredits(movieDetailsModel);
                         }
                     }
                     @Override
@@ -67,14 +64,13 @@ public class MovieDetailsRepository {
                 });
     }
 
-    public void loadCredits(int movieId) {
-        movieApi.getCredits(movieId, Credentials.API_KEY)
+    public void loadCredits(MovieDetailsModel movieDetailsModel) {
+        movieApi.getCredits(movieDetailsModel.getId(), Credentials.API_KEY)
                 .enqueue(new Callback<CreditsResponse>() {
                     @Override
                     public void onResponse(Call<CreditsResponse> call, Response<CreditsResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            castListLiveData.postValue(response.body().getCastList());
-                            crewListLiveData.postValue(response.body().getCrewList());
+                            finishSettingDetails(movieDetailsModel, response.body());
                         }
                     }
 
@@ -85,15 +81,36 @@ public class MovieDetailsRepository {
                 });
     }
 
+    private void finishSettingDetails(MovieDetailsModel movieDetailsModel, CreditsResponse creditsResponse) {
+        List<CastModel> castList = creditsResponse.getCastList();
+        List<CrewModel> crewList = creditsResponse.getCrewList();
+        CrewModel director = getMovieDirector(crewList);
+
+        movieDetailsModel.setCast_list(castList);
+        movieDetailsModel.setCrew_list(crewList);
+        movieDetailsModel.setDirector(director);
+
+        movieDetailsLiveData.postValue(movieDetailsModel);
+
+    }
+
+    /* Find director in list of crew. Returns default CrewModel if not found */
+    public CrewModel getMovieDirector(List<CrewModel> crewList) {
+        String jobName = "Director";
+        CrewModel director =
+                new CrewModel(0, "Undetermined", jobName, null, "Directing");
+
+        for (CrewModel crew : crewList) {
+            if (crew.getJob().equalsIgnoreCase(jobName)) {
+                director = crew;
+            }
+        }
+
+        return director;
+    }
+
     public MutableLiveData<MovieDetailsModel> getMovieDetailsLiveData() {
         return movieDetailsLiveData;
     }
 
-    public MutableLiveData<List<CastModel>> getCastListLiveData() {
-        return castListLiveData;
-    }
-
-    public MutableLiveData<List<CrewModel>> getCrewListLiveData() {
-        return crewListLiveData;
-    }
 }

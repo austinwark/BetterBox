@@ -52,6 +52,32 @@ public class MovieDetailsModel implements Parcelable {
     @Expose()
     private int runtime;
 
+
+    @SerializedName("director")
+    @Expose()
+    private CrewModel director;
+
+    @SerializedName("cast_list")
+    @Expose()
+    private List<CastModel> cast_list;
+
+    @SerializedName("crew_list")
+    @Expose()
+    private List<CrewModel> crew_list;
+
+    public void setCast_list(List<CastModel> castList) {
+        cast_list = castList;
+    }
+
+    public void setCrew_list(List<CrewModel> crewList) {
+        crew_list = crewList;
+    }
+
+    /* Find director in list of crew. Returns default CrewModel if not found */
+    public void setDirector(CrewModel director) {
+        this.director = director;
+    }
+
     public MovieDetailsModel(int id, String title, String overview, String release_date,
                              float vote_average, String poster_path, String backdrop_path,
                              List<GenreModel> genres, float popularity, int runtime) {
@@ -162,6 +188,18 @@ public class MovieDetailsModel implements Parcelable {
 
     public int getRuntime() {
         return runtime;
+    }
+
+    public CrewModel getDirector() {
+        return director;
+    }
+
+    public List<CastModel> getCast_list() {
+        return cast_list;
+    }
+
+    public List<CrewModel> getCrew_list() {
+        return crew_list;
     }
 
     @Override

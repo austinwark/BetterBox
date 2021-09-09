@@ -79,15 +79,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             updateUI(details);
         });
 
-        movieDetailsViewModel.getCastListLiveData().observe(this, castList -> {
-
-        });
-
-        movieDetailsViewModel.getCrewListLiveData().observe(this, crewList -> {
-            CrewModel director = movieDetailsViewModel.getMovieDirector(crewList);
-            updateDirector(director);
-        });
-
         movieDetailsViewModel.getShowMoreOverviewLiveData().observe(this, showMore -> {
             overviewTextView.setMaxLines(15);
             moreIcon.setVisibility(View.INVISIBLE);
@@ -107,6 +98,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void updateUI(MovieDetailsModel details) {
         titleTextView.setText(details.getTitle());
+        directorTextView.setText(getString(R.string.director_textview, details.getDirector().getName()));
         genreTextView.setText(details.getFirstGenreName());
         releaseTextView.setText(details.getRelease_date().substring(0, 4)); // Only show year
         runtimeTextView.setText(getString(R.string.runtime_textview, String.valueOf(details.getRuntime())));
@@ -123,16 +115,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void updateDirector(CrewModel director) {
-        directorTextView.setText(getString(R.string.director_textview, director.getName()));
-    }
-
     private void loadBackdropImage(String backdropPath) {
         String backdropUrl = Credentials.IMAGE_BASE_URL + "w300" + backdropPath;
 
         Glide.with(this)
                 .load(backdropUrl)
-                .placeholder(new ColorDrawable(0xFF018786))
+                .placeholder(new ColorDrawable(0x000000))
+                .error(R.drawable.ic_baseline_no_image_24)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(backDropImageView);
     }
@@ -143,7 +132,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(posterUrl)
-                .placeholder(new ColorDrawable(0xFF018786))
+                .placeholder(new ColorDrawable(0x000000))
+                .error(R.drawable.ic_baseline_no_image_24)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(posterImageView);
     }
