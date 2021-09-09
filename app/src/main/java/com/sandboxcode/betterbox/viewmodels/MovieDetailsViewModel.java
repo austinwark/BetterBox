@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.CastModel;
 import com.sandboxcode.betterbox.models.CrewModel;
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
@@ -16,6 +17,7 @@ public class MovieDetailsViewModel extends ViewModel {
 
     private MovieDetailsRepository movieDetailsRepository;
     private MutableLiveData<MovieDetailsModel> movieDetailsLiveData;
+    private MutableLiveData<Boolean> finishActivity;
 
     private Boolean isOverviewTruncated;
     private MutableLiveData<Boolean> showMoreOverviewLiveData; // Expand overview
@@ -27,6 +29,7 @@ public class MovieDetailsViewModel extends ViewModel {
         movieDetailsRepository = MovieDetailsRepository.getInstance();
 
         movieDetailsLiveData = movieDetailsRepository.getMovieDetailsLiveData();
+        finishActivity = new MutableLiveData<>();
 
         showMoreOverviewLiveData = new MutableLiveData<>();
         showLessOverviewLiveData = new MutableLiveData<>();
@@ -60,8 +63,18 @@ public class MovieDetailsViewModel extends ViewModel {
         isOverviewTruncated = !isOverviewTruncated;
     }
 
+    public void handleOnOptionsItemSelected(int itemId) {
+        if (itemId == android.R.id.home)
+            finishActivity.setValue(true);
+
+    }
+
     public MutableLiveData<MovieDetailsModel> getMovieDetailsLiveData() {
         return movieDetailsLiveData;
+    }
+
+    public MutableLiveData<Boolean> getFinishActivity() {
+        return finishActivity;
     }
 
     public MutableLiveData<Boolean> getShowMoreOverviewLiveData() {

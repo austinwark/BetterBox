@@ -1,5 +1,7 @@
 package com.sandboxcode.betterbox.activities;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -8,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,6 +46,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
         movieDetailsViewModel = new ViewModelProvider(this).get(MovieDetailsViewModel.class);
 
         Intent intent = getIntent();
@@ -52,6 +59,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         observeChanges();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        movieDetailsViewModel.handleOnOptionsItemSelected(item.getItemId());
+        return super.onOptionsItemSelected(item);
     }
 
     private void instantiateUI() {
@@ -68,8 +81,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         overviewLayout.setOnClickListener(view -> {
             movieDetailsViewModel.toggleOverviewState();
-            //            overviewTextView.setMaxLines(15);
-//            moreIcon.setVisibility(View.GONE);
         });
     }
 
@@ -77,6 +88,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieDetailsViewModel.getMovieDetailsLiveData().observe(this, details -> {
             // TODO -- Check if details is NULL?
             updateUI(details);
+        });
+
+        movieDetailsViewModel.getFinishActivity().observe(this, clicked -> {
+            this.finish();
         });
 
         movieDetailsViewModel.getShowMoreOverviewLiveData().observe(this, showMore -> {
