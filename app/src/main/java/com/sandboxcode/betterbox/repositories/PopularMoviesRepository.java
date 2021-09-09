@@ -5,9 +5,10 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.sandboxcode.betterbox.models.MovieDetailsModel;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.request.MovieApi;
-import com.sandboxcode.betterbox.response.MovieSearchResponse;
+import com.sandboxcode.betterbox.response.PopularMoviesResponse;
 import com.sandboxcode.betterbox.utils.Credentials;
 
 import java.util.List;
@@ -44,19 +45,33 @@ public class PopularMoviesRepository {
 
     public void loadPopularMovies(int pageNumber) {
         movieApi.getPopularMovies(Credentials.API_KEY, pageNumber)
-                .enqueue(new Callback<MovieSearchResponse>() {
+                .enqueue(new Callback<PopularMoviesResponse>() {
                     @Override
-                    public void onResponse(Call<MovieSearchResponse> call, Response<MovieSearchResponse> response) {
+                    public void onResponse(Call<PopularMoviesResponse> call, Response<PopularMoviesResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             popularMoviesLiveData.postValue(response.body().getResults());
-                            for (MovieModel movieModel : response.body().getResults())
-                                Log.v("MovieModel: ", movieModel.toString());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<MovieSearchResponse> call, Throwable t) {
+                    public void onFailure(Call<PopularMoviesResponse> call, Throwable t) {
                         popularMoviesLiveData.postValue(null); // TODO -- Handle failure
+                    }
+                });
+    }
+
+    public void loadMovieDetails(int id) {
+        movieApi.getMovieDetails(id, Credentials.API_KEY)
+                .enqueue(new Callback<MovieDetailsModel>() {
+                    @Override
+                    public void onResponse(Call<MovieDetailsModel> call, Response<MovieDetailsModel> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.v("MOVIE DETAILS: ", response.body().toString());
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<MovieDetailsModel> call, Throwable t) {
+
                     }
                 });
     }

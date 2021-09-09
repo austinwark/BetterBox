@@ -27,6 +27,7 @@ import com.bumptech.glide.request.target.Target;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.utils.Credentials;
+import com.sandboxcode.betterbox.utils.OnPopularMovieClickListener;
 
 
 import java.util.ArrayList;
@@ -36,10 +37,12 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     private List<MovieModel> results;
     public Context context;
+    OnPopularMovieClickListener clickListener;
 
-    public PopularMoviesAdapter(Context context, List results) {
+    public PopularMoviesAdapter(Context context, List<MovieModel> results, OnPopularMovieClickListener clickListener) {
         this.context = context;
         this.results = results;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -56,14 +59,18 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         MovieModel movieModel = results.get(position);
         holder.titleTextView.setText(movieModel.getTitle());
 
-        if (movieModel.getPoster_path() != null) {
-//            String imageUrl = Credentials.IMAGE_BASE_URL + "original" + movieModel.getPoster_path();
-            String imageUrl = Credentials.IMAGE_BASE_URL + "w154" + movieModel.getPoster_path();
+        holder.getItemView().setOnClickListener(v ->
+                clickListener.onPopularMovieClicked(movieModel.getId()));
 
+        // TODO -- Set HEIGHT & WIDTH of ImageView programmatically
+        if (movieModel.getPoster_path() != null) {
+
+            String imageUrl = Credentials.IMAGE_BASE_URL + "w154" + movieModel.getPoster_path();
 
             Glide.with(holder.itemView)
                     .load(imageUrl)
                     .placeholder(new ColorDrawable(0xFF018786))
+                    .error(R.drawable.ic_baseline_no_image_24)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -99,6 +106,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 //    }
 
     class PopularMoviesHolder extends RecyclerView.ViewHolder {
+        private View itemView;
         private TextView titleTextView;
         private ImageView thumbnailImageView;
         private ProgressBar progressBar;
@@ -106,9 +114,14 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         public PopularMoviesHolder(@NonNull View itemView) {
             super(itemView);
 
+            this.itemView = itemView;
             titleTextView = itemView.findViewById(R.id.popular_movie_item_title);
             thumbnailImageView = itemView.findViewById(R.id.popular_movie_item_thumbnail);
             progressBar = itemView.findViewById(R.id.popular_movie_item_rating_bar);
+        }
+
+        public View getItemView() {
+            return itemView;
         }
     }
 
