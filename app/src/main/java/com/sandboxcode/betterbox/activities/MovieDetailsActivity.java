@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -19,11 +21,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.sandboxcode.betterbox.R;
+import com.sandboxcode.betterbox.adapters.CastAdapter;
+import com.sandboxcode.betterbox.adapters.CrewAdapter;
 import com.sandboxcode.betterbox.models.CastModel;
 import com.sandboxcode.betterbox.models.CrewModel;
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
 import com.sandboxcode.betterbox.utils.Credentials;
 import com.sandboxcode.betterbox.viewmodels.MovieDetailsViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
@@ -41,6 +48,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView overviewTextView;
     private ImageView moreIcon;
 
+    private List<CastModel> castList;
+    private CastAdapter castAdapter;
+    private RecyclerView castRecyclerView;
+
+    private List<CrewModel> crewList;
+    private CrewAdapter crewAdapter;
+    private RecyclerView crewRecyclerview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +67,19 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         movieDetailsViewModel = new ViewModelProvider(this).get(MovieDetailsViewModel.class);
 
+        castList = new ArrayList<>();
+        castAdapter = new CastAdapter(castList);
+
+        crewList = new ArrayList<>();
+        crewAdapter = new CrewAdapter(crewList);
+
         Intent intent = getIntent();
         int movieId = intent.getIntExtra(PopularMoviesActivity.MOVIE_ID_MESSAGE, 0);
-        movieDetailsViewModel.loadMovieDetails(movieId);
         instantiateUI();
 
         observeChanges();
 
+        movieDetailsViewModel.loadMovieDetails(movieId);
     }
 
     @Override
@@ -82,6 +103,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
         overviewLayout.setOnClickListener(view -> {
             movieDetailsViewModel.toggleOverviewState();
         });
+
+        castRecyclerView = findViewById(R.id.activity_movie_details_cast_recyclerview);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        castRecyclerView.setLayoutManager(layoutManager);
+        castRecyclerView.setAdapter(castAdapter);
+
+        crewRecyclerview = findViewById(R.id.activity_movie_details_crew_recyclerview);
+        RecyclerView.LayoutManager crewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        crewRecyclerview.setLayoutManager(crewLayoutManager);
+        crewRecyclerview.setAdapter(crewAdapter);
     }
 
     private void observeChanges() {
@@ -127,6 +158,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         if (details.getPoster_path() != null)
             loadPosterImage(details.getPoster_path());
+
+        int currentPosition = castAdapter.getItemCount();
+        castList.addAll(details.getCast_list());
+        castAdapter.notifyItemRangeInserted(currentPosition, castList.size());
+
+        int currentPosition2 = crewAdapter.getItemCount();
+        crewList.addAll(details.getCrew_list());
+        crewAdapter.notifyItemRangeInserted(currentPosition2, crewList.size());
 
     }
 

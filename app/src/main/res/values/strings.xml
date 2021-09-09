@@ -2,6 +2,6 @@
     <string name="app_name">BetterBox</string>
     <string name="activity_popular_movies_fab">Floating action button to scroll to top of page</string>
 
-    <string name="director_textview">Directed By:\n%1$s</string>
+    <string name="director_textview">DIRECTED BY:\n%1$s</string>
     <string name="runtime_textview">%1$s mins</string>
 </resources>
