@@ -4,12 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
+import com.sandboxcode.betterbox.utils.Credentials;
 import com.sandboxcode.betterbox.viewmodels.MovieDetailsViewModel;
 
 public class MovieDetailsActivity extends AppCompatActivity {
@@ -23,6 +31,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private ImageView posterImageView;
     private TextView releaseTextView;
     private TextView runtimeTextView;
+    private LinearLayout overviewLayout;
+    private TextView overviewTextView;
+    private ImageView moreIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +58,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
         posterImageView = findViewById(R.id.activity_movie_details_poster);
         releaseTextView = findViewById(R.id.activity_movie_details_release);
         runtimeTextView = findViewById(R.id.activity_movie_details_runtime);
+        overviewLayout = findViewById(R.id.activity_movie_details_overview_layout);
+        overviewTextView = findViewById(R.id.activity_movie_details_overview);
+        moreIcon = findViewById(R.id.activity_movie_details_more);
+
+        overviewLayout.setOnClickListener(view -> {
+            movieDetailsViewModel.toggleOverviewState();
+            //            overviewTextView.setMaxLines(15);
+//            moreIcon.setVisibility(View.GONE);
+        });
     }
 
     private void observeChanges() {
@@ -54,12 +74,61 @@ public class MovieDetailsActivity extends AppCompatActivity {
             // TODO -- Check if details is NULL?
             updateUI(details);
         });
+
+        movieDetailsViewModel.getShowMoreOverviewLiveData().observe(this, showMore -> {
+            overviewTextView.setMaxLines(15);
+            moreIcon.setVisibility(View.INVISIBLE);
+        });
+
+        movieDetailsViewModel.getShowLessOverviewLiveData().observe(this, showLess -> {
+            overviewTextView.setEllipsize(TextUtils.TruncateAt.END);
+            overviewTextView.setMaxLines(3);
+            moreIcon.setVisibility(View.VISIBLE);
+        });
+
+        movieDetailsViewModel.getRemoveOverviewClickListener().observe(this, remove -> {
+            overviewLayout.setOnClickListener(null);
+            overviewLayout.setClickable(false);
+        });
     }
 
     private void updateUI(MovieDetailsModel details) {
         titleTextView.setText(details.getTitle());
         genreTextView.setText(details.getFirstGenreName());
-        releaseTextView.setText(details.getRelease_date());
-        runtimeTextView.setText(details.getRuntime());
+        releaseTextView.setText(details.getRelease_date().substring(0, 4)); // Only show year
+        runtimeTextView.setText(details.getRuntime() + " mins");
+        overviewTextView.setText(details.getOverview());
+
+        movieDetailsViewModel.checkOverviewSize(overviewTextView.getLineCount());
+
+        // TODO -- Check for null in viewmodel and set placeholder if it is
+        if (details.getBackdrop_path() != null)
+            loadBackdropImage(details.getBackdrop_path());
+
+        if (details.getPoster_path() != null)
+            loadPosterImage(details.getPoster_path());
+
     }
+
+    private void loadBackdropImage(String backdropPath) {
+        String backdropUrl = Credentials.IMAGE_BASE_URL + "w300" + backdropPath;
+
+        Glide.with(this)
+                .load(backdropUrl)
+                .placeholder(new ColorDrawable(0xFF018786))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(backDropImageView);
+    }
+
+    private void loadPosterImage(String posterPath) {
+
+        String posterUrl = Credentials.IMAGE_BASE_URL + "w154" + posterPath;
+
+        Glide.with(this)
+                .load(posterUrl)
+                .placeholder(new ColorDrawable(0xFF018786))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(posterImageView);
+    }
+
 }
