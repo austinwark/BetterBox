@@ -59,6 +59,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("ON: ", "CREATE");
+
         setContentView(R.layout.activity_movie_details);
 
         ActionBar actionBar = getSupportActionBar();
@@ -192,4 +194,23 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .into(posterImageView);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v("ON: ", "DESTROY");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("ON: ", "START");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v("ON: ", "STOP");
+
+    }
 }

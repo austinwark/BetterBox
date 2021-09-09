@@ -26,7 +26,7 @@ public class MovieDetailsViewModel extends ViewModel {
 
     public MovieDetailsViewModel() {
 
-        movieDetailsRepository = MovieDetailsRepository.getInstance();
+        movieDetailsRepository = new MovieDetailsRepository();
 
         movieDetailsLiveData = movieDetailsRepository.getMovieDetailsLiveData();
         finishActivity = new MutableLiveData<>();

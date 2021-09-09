@@ -22,19 +22,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetailsRepository {
 
-    private static MovieDetailsRepository instance;
-
     private MovieApi movieApi;
     private MutableLiveData<MovieDetailsModel> movieDetailsLiveData;
 
-    public static MovieDetailsRepository getInstance() {
-        if (instance == null)
-            instance = new MovieDetailsRepository();
-
-        return instance;
-    }
-
-    private MovieDetailsRepository() {
+    public MovieDetailsRepository() {
         movieDetailsLiveData = new MutableLiveData<>();
 
         movieApi = new Retrofit.Builder()
