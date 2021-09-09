@@ -50,8 +50,6 @@ public class PopularMoviesRepository {
                     public void onResponse(Call<PopularMoviesResponse> call, Response<PopularMoviesResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             popularMoviesLiveData.postValue(response.body().getResults());
-                            for (MovieModel movieModel : response.body().getResults())
-                                Log.v("MovieModel: ", movieModel.toString());
                         }
                     }
 

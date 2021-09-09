@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.sandboxcode.betterbox.R;
+import com.sandboxcode.betterbox.models.CastModel;
+import com.sandboxcode.betterbox.models.CrewModel;
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
 import com.sandboxcode.betterbox.utils.Credentials;
 import com.sandboxcode.betterbox.viewmodels.MovieDetailsViewModel;
@@ -27,6 +29,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private ImageView backDropImageView;
     private TextView titleTextView;
+    private TextView directorTextView;
     private TextView genreTextView;
     private ImageView posterImageView;
     private TextView releaseTextView;
@@ -54,6 +57,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void instantiateUI() {
         backDropImageView = findViewById(R.id.activity_movie_details_backdrop);
         titleTextView = findViewById(R.id.activity_movie_details_title);
+        directorTextView = findViewById(R.id.activity_movie_details_director);
         genreTextView = findViewById(R.id.activity_movie_details_genre);
         posterImageView = findViewById(R.id.activity_movie_details_poster);
         releaseTextView = findViewById(R.id.activity_movie_details_release);
@@ -73,6 +77,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieDetailsViewModel.getMovieDetailsLiveData().observe(this, details -> {
             // TODO -- Check if details is NULL?
             updateUI(details);
+        });
+
+        movieDetailsViewModel.getCastListLiveData().observe(this, castList -> {
+
+        });
+
+        movieDetailsViewModel.getCrewListLiveData().observe(this, crewList -> {
+            CrewModel director = movieDetailsViewModel.getMovieDirector(crewList);
+            updateDirector(director);
         });
 
         movieDetailsViewModel.getShowMoreOverviewLiveData().observe(this, showMore -> {
@@ -96,7 +109,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         titleTextView.setText(details.getTitle());
         genreTextView.setText(details.getFirstGenreName());
         releaseTextView.setText(details.getRelease_date().substring(0, 4)); // Only show year
-        runtimeTextView.setText(details.getRuntime() + " mins");
+        runtimeTextView.setText(getString(R.string.runtime_textview, String.valueOf(details.getRuntime())));
         overviewTextView.setText(details.getOverview());
 
         movieDetailsViewModel.checkOverviewSize(overviewTextView.getLineCount());
@@ -108,6 +121,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (details.getPoster_path() != null)
             loadPosterImage(details.getPoster_path());
 
+    }
+
+    private void updateDirector(CrewModel director) {
+        directorTextView.setText(getString(R.string.director_textview, director.getName()));
     }
 
     private void loadBackdropImage(String backdropPath) {

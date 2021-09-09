@@ -5,13 +5,19 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.sandboxcode.betterbox.models.CastModel;
+import com.sandboxcode.betterbox.models.CrewModel;
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
 import com.sandboxcode.betterbox.repositories.MovieDetailsRepository;
+
+import java.util.List;
 
 public class MovieDetailsViewModel extends ViewModel {
 
     private MovieDetailsRepository movieDetailsRepository;
     private MutableLiveData<MovieDetailsModel> movieDetailsLiveData;
+    private MutableLiveData<List<CastModel>> castListLiveData;
+    private MutableLiveData<List<CrewModel>> crewListLiveData;
 
     private Boolean isOverviewTruncated;
     private MutableLiveData<Boolean> showMoreOverviewLiveData; // Expand overview
@@ -21,7 +27,11 @@ public class MovieDetailsViewModel extends ViewModel {
     public MovieDetailsViewModel() {
 
         movieDetailsRepository = MovieDetailsRepository.getInstance();
+
         movieDetailsLiveData = movieDetailsRepository.getMovieDetailsLiveData();
+        castListLiveData = movieDetailsRepository.getCastListLiveData();
+        crewListLiveData = movieDetailsRepository.getCrewListLiveData();
+
         showMoreOverviewLiveData = new MutableLiveData<>();
         showLessOverviewLiveData = new MutableLiveData<>();
         removeOverviewClickListener = new MutableLiveData<>();
@@ -31,8 +41,19 @@ public class MovieDetailsViewModel extends ViewModel {
         movieDetailsRepository.loadMovieDetails(id);
     }
 
-    public MutableLiveData<MovieDetailsModel> getMovieDetailsLiveData() {
-        return movieDetailsLiveData;
+    /* Find director in list of crew. Returns default CrewModel if not found */
+    public CrewModel getMovieDirector(List<CrewModel> crewList) {
+        String jobName = "Director";
+        CrewModel director =
+                new CrewModel(0, "Undetermined", jobName, null, "Directing");
+
+        for (CrewModel crew : crewList) {
+            if (crew.getJob().equalsIgnoreCase(jobName)) {
+                director = crew;
+            }
+        }
+
+        return director;
     }
 
     public void checkOverviewSize(int numLines) {
@@ -56,6 +77,18 @@ public class MovieDetailsViewModel extends ViewModel {
             showLessOverviewLiveData.setValue(true);
 
         isOverviewTruncated = !isOverviewTruncated;
+    }
+
+    public MutableLiveData<MovieDetailsModel> getMovieDetailsLiveData() {
+        return movieDetailsLiveData;
+    }
+
+    public MutableLiveData<List<CastModel>> getCastListLiveData() {
+        return castListLiveData;
+    }
+
+    public MutableLiveData<List<CrewModel>> getCrewListLiveData() {
+        return crewListLiveData;
     }
 
     public MutableLiveData<Boolean> getShowMoreOverviewLiveData() {

@@ -37,7 +37,19 @@
         android:textColor="#FAFAFA"
         />
 
-<!--    TODO: Add director-->
+    <TextView
+        android:id="@+id/activity_movie_details_director"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Directed By:"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="#FAFAFA"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintTop_toBottomOf="@id/activity_movie_details_title"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/activity_movie_details_genre"
@@ -52,7 +64,7 @@
         android:textColor="#FAFAFA"
         app:layout_constraintBottom_toTopOf="@id/activity_movie_details_release"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_movie_details_title" />
+        app:layout_constraintTop_toBottomOf="@id/activity_movie_details_director" />
 
     <ImageView
         android:id="@+id/activity_movie_details_poster"

@@ -1,7 +1,7 @@
 package com.sandboxcode.betterbox.request;
 
 import com.sandboxcode.betterbox.models.MovieDetailsModel;
-import com.sandboxcode.betterbox.models.MovieModel;
+import com.sandboxcode.betterbox.response.CreditsResponse;
 import com.sandboxcode.betterbox.response.PopularMoviesResponse;
 
 import retrofit2.Call;
@@ -26,5 +26,10 @@ public interface MovieApi {
     @GET("3/movie/{movie_id}?")
     Call<MovieDetailsModel> getMovieDetails(@Path("movie_id") int movie_id,
                                             @Query("api_key") String api_key);
+
+    /* Get list of credits by movie id */
+    @GET("3/movie/{movie_id}/credits?")
+    Call<CreditsResponse> getCredits(@Path("movie_id") int movie_id,
+                                     @Query("api_key") String api_key);
 
 }
