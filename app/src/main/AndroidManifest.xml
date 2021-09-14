@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BetterBox">
         <activity
+            android:name=".activities.SearchActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.MovieDetailsActivity"
             android:exported="true" />
         <activity

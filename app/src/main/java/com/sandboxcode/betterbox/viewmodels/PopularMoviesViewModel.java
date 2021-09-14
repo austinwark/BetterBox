@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.repositories.PopularMoviesRepository;
 
@@ -15,6 +16,7 @@ public class PopularMoviesViewModel extends ViewModel {
 
     private PopularMoviesRepository popularMoviesRepository;
     private LiveData<List<MovieModel>> popularMoviesLiveData;
+    private MutableLiveData<Boolean> openSearchActivity;
 
     private MutableLiveData<Integer> fabVisibilityLiveData;
 
@@ -22,6 +24,7 @@ public class PopularMoviesViewModel extends ViewModel {
 
         popularMoviesRepository = PopularMoviesRepository.getInstance();
         popularMoviesLiveData = popularMoviesRepository.getPopularMoviesLiveData();
+        openSearchActivity = new MutableLiveData<>();
         fabVisibilityLiveData = new MutableLiveData<>(8);
     }
 
@@ -51,8 +54,18 @@ public class PopularMoviesViewModel extends ViewModel {
             fabVisibilityLiveData.postValue(8); // gone
     }
 
-    public MutableLiveData<Integer> getFabVisibilityLiveData() {
+    public LiveData<Integer> getFabVisibilityLiveData() {
         return fabVisibilityLiveData;
+    }
+
+    public void handleOnBottomNavItemSelected(int id) {
+        if (id == R.id.item_bottom_nav_search) {
+            openSearchActivity.postValue(true);
+        }
+    }
+
+    public LiveData<Boolean> getOpenSearchActivity() {
+        return openSearchActivity;
     }
 
     public void loadMovieDetails(int id) {

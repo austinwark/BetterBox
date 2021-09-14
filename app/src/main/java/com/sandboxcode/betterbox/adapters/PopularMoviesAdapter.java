@@ -5,8 +5,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,19 +25,18 @@ import com.bumptech.glide.request.target.Target;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.models.MovieModel;
 import com.sandboxcode.betterbox.utils.Credentials;
-import com.sandboxcode.betterbox.utils.OnPopularMovieClickListener;
+import com.sandboxcode.betterbox.utils.OnMovieClickListener;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdapter.PopularMoviesHolder> {
 
     private List<MovieModel> results;
     public Context context;
-    OnPopularMovieClickListener clickListener;
+    OnMovieClickListener clickListener;
 
-    public PopularMoviesAdapter(Context context, List<MovieModel> results, OnPopularMovieClickListener clickListener) {
+    public PopularMoviesAdapter(Context context, List<MovieModel> results, OnMovieClickListener clickListener) {
         this.context = context;
         this.results = results;
         this.clickListener = clickListener;
@@ -60,7 +57,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         holder.titleTextView.setText(movieModel.getTitle());
 
         holder.getItemView().setOnClickListener(v ->
-                clickListener.onPopularMovieClicked(movieModel.getId()));
+                clickListener.onMovieClicked(movieModel.getId()));
 
         // TODO -- Set HEIGHT & WIDTH of ImageView programmatically
         if (movieModel.getPoster_path() != null) {

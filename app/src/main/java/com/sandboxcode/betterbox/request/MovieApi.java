@@ -32,4 +32,8 @@ public interface MovieApi {
     Call<CreditsResponse> getCredits(@Path("movie_id") int movie_id,
                                      @Query("api_key") String api_key);
 
+    @GET("3/search/movie?")
+    Call<PopularMoviesResponse> searchMovies(@Query("api_key") String key,
+                                             @Query("query") String query);
+
 }

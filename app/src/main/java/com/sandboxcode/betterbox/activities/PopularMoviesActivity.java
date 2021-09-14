@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -15,12 +14,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
 import com.sandboxcode.betterbox.models.MovieModel;
-import com.sandboxcode.betterbox.utils.OnPopularMovieClickListener;
+import com.sandboxcode.betterbox.utils.OnMovieClickListener;
 import com.sandboxcode.betterbox.viewmodels.PopularMoviesViewModel;
 
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ public class PopularMoviesActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
+    BottomNavigationView bottomNavigationView;
 
     private List<MovieModel> results;
     private int pageCount; // TODO -- Keep track in VIEWMODEL
@@ -53,9 +53,9 @@ public class PopularMoviesActivity extends AppCompatActivity {
         popularMoviesViewModel =
                 new ViewModelProvider(this).get(PopularMoviesViewModel.class);
 
-        popularMoviesAdapter = new PopularMoviesAdapter(this, results, new OnPopularMovieClickListener() {
+        popularMoviesAdapter = new PopularMoviesAdapter(this, results, new OnMovieClickListener() {
             @Override
-            public void onPopularMovieClicked(int id) {
+            public void onMovieClicked(int id) {
                 startMovieDetailsActivity(id);
             }
         });
@@ -86,9 +86,23 @@ public class PopularMoviesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.item_bottom_nav_home);
+
+    }
+
     private void instantiateUI() {
         recyclerView = findViewById(R.id.activity_popular_movies_recyclerView);
         floatingActionButton = findViewById(R.id.activity_popular_movies_fab);
+        bottomNavigationView = findViewById(R.id.activity_popular_movies_bottom_nav);
+
+        bottomNavigationView.setSelectedItemId(R.id.item_bottom_nav_home);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            popularMoviesViewModel.handleOnBottomNavItemSelected(item.getItemId()); // Pass id to ViewModel to be handled
+            return true;
+        });
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
 //        recyclerView.setHasFixedSize(true);
@@ -157,6 +171,11 @@ public class PopularMoviesActivity extends AppCompatActivity {
             else
                 fadeViewOut(floatingActionButton);
 
+        });
+
+        popularMoviesViewModel.getOpenSearchActivity().observe(this, openActivity -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
         });
     }
 
