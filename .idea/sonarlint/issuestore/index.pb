@@ -32,5 +32,3 @@ C
 keystore.properties,1\d\1de50180da55ed4a4efe5c4c09eefa3c70058aa9
 Å
 Qapp/src/main/java/com/sandboxcode/betterbox/viewmodels/MovieDetailsViewModel.java,b\6\b6cd45849818cf936279f5c4340739bf65b2e626
-@
-app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
