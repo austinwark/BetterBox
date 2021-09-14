@@ -5,13 +5,25 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/activity_popular_movies_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:background="@color/teal_700"
-        tools:context=".activities.PopularMoviesActivity">
+        android:layout_height="0dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="#000000"
+        tools:context=".activities.PopularMoviesActivity"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/activity_popular_movies_bottom_nav">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/activity_popular_movies_recyclerView"
@@ -32,5 +44,14 @@
         android:visibility="gone"
         android:alpha="0"
         android:contentDescription="@string/activity_popular_movies_fab"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/activity_popular_movies_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/menu_bottom_nav"
+        app:itemIconSize="32dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sandboxcode.betterbox.R;
 import com.sandboxcode.betterbox.adapters.PopularMoviesAdapter;
@@ -41,6 +42,9 @@ public class PopularMoviesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popular_movies);
+
+//        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         pageCount = 1;
 
